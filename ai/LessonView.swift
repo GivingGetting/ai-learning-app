@@ -171,17 +171,15 @@ struct LessonView: View {
                 
                 // 提交按钮
                 Button(action: {
-                    if let selectedAnswer = selectedAnswer {
-                        showExplanation = true
-                    }
+                    showExplanation = true
                 }) {
-                    Text(selectedAnswer != nil ? "提交答案" : "选择答案")
+                    Text("提交答案")
                         .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(selectedAnswer != nil ? Color.blue : Color.gray)
+                        .background(Color.blue)
                         .cornerRadius(16)
                 }
                 .disabled(selectedAnswer == nil)
@@ -196,8 +194,12 @@ struct LessonView: View {
             }
         } message: {
             let question = lesson.questions[currentQuestionIndex]
-            let isCorrect = selectedAnswer == question.correctAnswer
-            Text("\(isCorrect ? "回答正确！" : "回答错误。") \(question.explanation)")
+            if let selectedAnswer = selectedAnswer {
+                let isCorrect = selectedAnswer == question.correctAnswer
+                Text("\(isCorrect ? "回答正确！" : "回答错误。") \(question.explanation)")
+            } else {
+                Text("请选择一个答案")
+            }
         }
     }
     

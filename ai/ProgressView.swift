@@ -3,7 +3,6 @@ import SwiftUI
 struct ProgressView: View {
     @Binding var userProgress: UserProgress
     @StateObject private var courseData = CourseData()
-    @StateObject private var planManager = StudyPlanManager()
     
     var body: some View {
         NavigationView {
@@ -118,124 +117,38 @@ struct ProgressView: View {
                 .fontWeight(.bold)
                 .padding(.horizontal)
             
-                            LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: 16) {
-                    StatCard(
-                        title: "学习天数",
-                        value: "\(userProgress.getStudyStreak())",
-                        icon: "calendar",
-                        color: .blue
-                    )
-                    
-                    StatCard(
-                        title: "本周学习时间",
-                        value: "\(userProgress.getWeeklyStudyTime()) 分钟",
-                        icon: "clock",
-                        color: .green
-                    )
-                    
-                    StatCard(
-                        title: "平均每日XP",
-                        value: "\(userProgress.totalXP / max(1, userProgress.getStudyStreak()))",
-                        icon: "chart.bar.fill",
-                        color: .orange
-                    )
-                    
-                    StatCard(
-                        title: "完成率",
-                        value: "\(Int(Double(userProgress.completedLessons.count) / Double(courseData.courses.flatMap { $0.lessons }.count) * 100))%",
-                        icon: "checkmark.circle.fill",
-                        color: .purple
-                    )
-                }
+            LazyVGrid(columns: [
+                GridItem(.flexible()),
+                GridItem(.flexible())
+            ], spacing: 16) {
+                StatCard(
+                    title: "学习天数",
+                    value: "\(userProgress.getStudyStreak())",
+                    icon: "calendar",
+                    color: .blue
+                )
                 
-                // AI聊天统计
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("AI助手统计")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .padding(.horizontal)
-                    
-                    LazyVGrid(columns: [
-                        GridItem(.flexible()),
-                        GridItem(.flexible())
-                    ], spacing: 16) {
-                        let aiStats = userProgress.getAIChatStats()
-                        
-                        StatCard(
-                            title: "AI对话次数",
-                            value: "\(aiStats.totalChats)",
-                            icon: "message.fill",
-                            color: .purple
-                        )
-                        
-                        StatCard(
-                            title: "问题数量",
-                            value: "\(aiStats.questionsAsked)",
-                            icon: "questionmark.circle.fill",
-                            color: .blue
-                        )
-                        
-                        StatCard(
-                            title: "学习路径",
-                            value: "\(aiStats.pathsGenerated)",
-                            icon: "map.fill",
-                            color: .green
-                        )
-                        
-                        StatCard(
-                            title: "最后对话",
-                            value: formatLastChatDate(aiStats.lastChatDate),
-                            icon: "clock.arrow.circlepath",
-                            color: .orange
-                        )
-                    }
-                    .padding(.horizontal)
-                }
+                StatCard(
+                    title: "本周学习时间",
+                    value: "\(userProgress.getWeeklyStudyTime()) 分钟",
+                    icon: "clock",
+                    color: .green
+                )
                 
-                // 学习计划统计
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("学习计划统计")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .padding(.horizontal)
-                    
-                    LazyVGrid(columns: [
-                        GridItem(.flexible()),
-                        GridItem(.flexible())
-                    ], spacing: 16) {
-                        StatCard(
-                            title: "总计划数",
-                            value: "\(planManager.getTotalPlansCount())",
-                            icon: "list.bullet.clipboard",
-                            color: .blue
-                        )
-                        
-                        StatCard(
-                            title: "进行中",
-                            value: "\(planManager.getActivePlansCount())",
-                            icon: "play.circle.fill",
-                            color: .green
-                        )
-                        
-                        StatCard(
-                            title: "已完成",
-                            value: "\(planManager.getCompletedPlansCount())",
-                            icon: "checkmark.circle.fill",
-                            color: .orange
-                        )
-                        
-                        StatCard(
-                            title: "平均进度",
-                            value: "\(Int(planManager.getAverageProgress() * 100))%",
-                            icon: "chart.line.uptrend.xyaxis",
-                            color: .purple
-                        )
-                    }
-                    .padding(.horizontal)
-                }
+                StatCard(
+                    title: "平均每日XP",
+                    value: "\(userProgress.totalXP / max(1, userProgress.getStudyStreak()))",
+                    icon: "chart.bar.fill",
+                    color: .orange
+                )
+                
+                StatCard(
+                    title: "完成率",
+                    value: "\(Int(Double(userProgress.completedLessons.count) / Double(courseData.courses.flatMap { $0.lessons }.count) * 100))%",
+                    icon: "checkmark.circle.fill",
+                    color: .purple
+                )
+            }
             .padding(.horizontal)
         }
     }
@@ -297,28 +210,6 @@ struct ProgressView: View {
         let totalLessons = courseData.courses.reduce(0) { $0 + $1.lessons.count }
         guard totalLessons > 0 else { return 0 }
         return Int((Double(userProgress.completedLessons.count) / Double(totalLessons)) * 100)
-    }
-    
-    private func formatLastChatDate(_ date: Date) -> String {
-        let calendar = Calendar.current
-        let now = Date()
-        let components = calendar.dateComponents([.day], from: date, to: now)
-        
-        if let days = components.day {
-            if days == 0 {
-                return "今天"
-            } else if days == 1 {
-                return "昨天"
-            } else if days < 7 {
-                return "\(days)天前"
-            } else {
-                let formatter = DateFormatter()
-                formatter.dateFormat = "MM/dd"
-                return formatter.string(from: date)
-            }
-        }
-        
-        return "未知"
     }
 }
 

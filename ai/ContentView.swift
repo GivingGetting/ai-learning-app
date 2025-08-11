@@ -40,40 +40,19 @@ struct ContentView: View {
                         }
                         .tag(1)
                     
-                    AIChatView(userProgress: userProgress)
-                        .tabItem {
-                            Image(systemName: "message.fill")
-                            Text("AI助手")
-                        }
-                        .tag(2)
-                    
-                    StudyPlanView()
-                        .tabItem {
-                            Image(systemName: "calendar.badge.plus")
-                            Text("学习计划")
-                        }
-                        .tag(3)
-                    
-                    SocialLearningView()
-                        .tabItem {
-                            Image(systemName: "person.3.fill")
-                            Text("社交学习")
-                        }
-                        .tag(4)
-                    
                     ProgressView(userProgress: $userProgress)
                         .tabItem {
                             Image(systemName: "chart.line.uptrend.xyaxis")
                             Text("进度")
                         }
-                        .tag(5)
+                        .tag(2)
                     
                     ProfileView(userProgress: $userProgress)
                         .tabItem {
                             Image(systemName: "person.circle.fill")
                             Text("我的")
                         }
-                        .tag(6)
+                        .tag(3)
                 }
                 .accentColor(.blue)
             }

@@ -3,13 +3,23 @@ import UserNotifications
 
 // MARK: - 课程模型
 struct Course: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let title: String
     let description: String
     let difficulty: Difficulty
     let lessons: [Lesson]
     let icon: String
     let color: String
+    
+    init(title: String, description: String, difficulty: Difficulty, lessons: [Lesson], icon: String, color: String) {
+        self.id = UUID()
+        self.title = title
+        self.description = description
+        self.difficulty = difficulty
+        self.lessons = lessons
+        self.icon = icon
+        self.color = color
+    }
     
     enum Difficulty: String, CaseIterable, Codable {
         case beginner = "初级"
@@ -28,12 +38,21 @@ struct Course: Identifiable, Codable {
 
 // MARK: - 课程单元模型
 struct Lesson: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let title: String
     let content: String
     let type: LessonType
     let questions: [Question]
     var isCompleted: Bool
+    
+    init(title: String, content: String, type: LessonType, questions: [Question], isCompleted: Bool = false) {
+        self.id = UUID()
+        self.title = title
+        self.content = content
+        self.type = type
+        self.questions = questions
+        self.isCompleted = isCompleted
+    }
     
     enum LessonType: String, CaseIterable, Codable {
         case theory = "理论"
@@ -44,12 +63,21 @@ struct Lesson: Identifiable, Codable {
 
 // MARK: - 问题模型
 struct Question: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let question: String
     let options: [String]
     let correctAnswer: Int
     let explanation: String
     let type: QuestionType
+    
+    init(question: String, options: [String], correctAnswer: Int, explanation: String, type: QuestionType) {
+        self.id = UUID()
+        self.question = question
+        self.options = options
+        self.correctAnswer = correctAnswer
+        self.explanation = explanation
+        self.type = type
+    }
     
     enum QuestionType: String, CaseIterable, Codable {
         case multipleChoice = "选择题"
@@ -69,14 +97,8 @@ class UserProgress: ObservableObject, Codable {
     @Published var reminderTime: Date = Calendar.current.date(from: DateComponents(hour: 9, minute: 0)) ?? Date()
     @Published var lastStudyDate: Date = Date()
     
-    // AI聊天相关数据
-    @Published var aiChatCount: Int = 0
-    @Published var aiQuestionsAsked: Int = 0
-    @Published var aiLearningPathsGenerated: Int = 0
-    @Published var lastAIChatDate: Date = Date()
-    
     enum CodingKeys: String, CodingKey {
-        case completedLessons, currentStreak, totalXP, level, achievements, dailyReminderEnabled, reminderTime, lastStudyDate, aiChatCount, aiQuestionsAsked, aiLearningPathsGenerated, lastAIChatDate
+        case completedLessons, currentStreak, totalXP, level, achievements, dailyReminderEnabled, reminderTime, lastStudyDate
     }
     
     init() {
@@ -93,12 +115,6 @@ class UserProgress: ObservableObject, Codable {
         dailyReminderEnabled = try container.decode(Bool.self, forKey: .dailyReminderEnabled)
         reminderTime = try container.decode(Date.self, forKey: .reminderTime)
         lastStudyDate = try container.decode(Date.self, forKey: .lastStudyDate)
-        
-        // AI聊天相关数据
-        aiChatCount = try container.decode(Int.self, forKey: .aiChatCount)
-        aiQuestionsAsked = try container.decode(Int.self, forKey: .aiQuestionsAsked)
-        aiLearningPathsGenerated = try container.decode(Int.self, forKey: .aiLearningPathsGenerated)
-        lastAIChatDate = try container.decode(Date.self, forKey: .lastAIChatDate)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -111,12 +127,6 @@ class UserProgress: ObservableObject, Codable {
         try container.encode(dailyReminderEnabled, forKey: .dailyReminderEnabled)
         try container.encode(reminderTime, forKey: .reminderTime)
         try container.encode(lastStudyDate, forKey: .lastStudyDate)
-        
-        // AI聊天相关数据
-        try container.encode(aiChatCount, forKey: .aiChatCount)
-        try container.encode(aiQuestionsAsked, forKey: .aiQuestionsAsked)
-        try container.encode(aiLearningPathsGenerated, forKey: .aiLearningPathsGenerated)
-        try container.encode(lastAIChatDate, forKey: .lastAIChatDate)
     }
     
     func completeLesson(_ lessonId: UUID) {
@@ -126,27 +136,6 @@ class UserProgress: ObservableObject, Codable {
         lastStudyDate = Date()
         checkLevelUp()
         saveProgress()
-    }
-    
-    // MARK: - AI聊天相关方法
-    func recordAIChat() {
-        aiChatCount += 1
-        aiQuestionsAsked += 1
-        lastAIChatDate = Date()
-        totalXP += 2 // AI聊天获得少量经验值
-        checkLevelUp()
-        saveProgress()
-    }
-    
-    func recordLearningPathGenerated() {
-        aiLearningPathsGenerated += 1
-        totalXP += 5 // 生成学习路径获得更多经验值
-        checkLevelUp()
-        saveProgress()
-    }
-    
-    func getAIChatStats() -> (totalChats: Int, questionsAsked: Int, pathsGenerated: Int, lastChatDate: Date) {
-        return (aiChatCount, aiQuestionsAsked, aiLearningPathsGenerated, lastAIChatDate)
     }
     
     func getStudyStreak() -> Int {
@@ -228,13 +217,14 @@ class UserProgress: ObservableObject, Codable {
 
 // MARK: - 成就模型
 struct Achievement: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let title: String
     let description: String
     let icon: String
     let dateEarned: Date
     
     init(title: String, description: String, icon: String) {
+        self.id = UUID()
         self.title = title
         self.description = description
         self.icon = icon
@@ -242,94 +232,169 @@ struct Achievement: Identifiable, Codable {
     }
 }
 
-// MARK: - 学习小组模型
-struct StudyGroup: Identifiable, Codable {
-    let id = UUID()
-    var name: String
-    var description: String
-    var members: [UUID]
-    var admins: [UUID]
-    var courses: [UUID]
-    var createdAt: Date
-    var isPublic: Bool
-    var maxMembers: Int
+// MARK: - AI聊天助手模型
+struct ChatMessage: Identifiable, Codable {
+    let id: UUID
+    let content: String
+    let isUser: Bool
+    let timestamp: Date
+    let messageType: MessageType
     
-    init(name: String, description: String, members: [UUID], admins: [UUID], courses: [UUID], createdAt: Date, isPublic: Bool, maxMembers: Int) {
+    init(content: String, isUser: Bool, messageType: MessageType = .text) {
+        self.id = UUID()
+        self.content = content
+        self.isUser = isUser
+        self.timestamp = Date()
+        self.messageType = messageType
+    }
+    
+    enum MessageType: String, Codable {
+        case text = "文本"
+        case image = "图片"
+        case code = "代码"
+        case link = "链接"
+    }
+}
+
+struct ChatSession: Identifiable, Codable {
+    let id: UUID
+    let title: String
+    let messages: [ChatMessage]
+    let createdAt: Date
+    let lastUpdated: Date
+    let topic: ChatTopic
+    
+    init(title: String, messages: [ChatMessage] = [], topic: ChatTopic) {
+        self.id = UUID()
+        self.title = title
+        self.messages = messages
+        self.createdAt = Date()
+        self.lastUpdated = Date()
+        self.topic = topic
+    }
+    
+    enum ChatTopic: String, CaseIterable, Codable {
+        case general = "通用AI"
+        case machineLearning = "机器学习"
+        case deepLearning = "深度学习"
+        case nlp = "自然语言处理"
+        case computerVision = "计算机视觉"
+        case reinforcementLearning = "强化学习"
+        case generativeAI = "生成式AI"
+        case aiTools = "AI工具"
+        case aiBusiness = "AI商业"
+        case custom = "自定义话题"
+    }
+}
+
+// MARK: - 学习计划模型
+struct StudyPlan: Identifiable, Codable {
+    let id: UUID
+    let title: String
+    let description: String
+    let targetDate: Date
+    let dailyGoal: Int // 每日学习目标（分钟）
+    let weeklyGoal: Int // 每周学习目标（分钟）
+    let courses: [UUID] // 关联的课程ID
+    let isActive: Bool
+    let createdAt: Date
+    let progress: StudyPlanProgress
+    
+    init(title: String, description: String, targetDate: Date, dailyGoal: Int, weeklyGoal: Int, courses: [UUID], isActive: Bool, createdAt: Date, progress: StudyPlanProgress) {
+        self.id = UUID()
+        self.title = title
+        self.description = description
+        self.targetDate = targetDate
+        self.dailyGoal = dailyGoal
+        self.weeklyGoal = weeklyGoal
+        self.courses = courses
+        self.isActive = isActive
+        self.createdAt = createdAt
+        self.progress = progress
+    }
+}
+
+struct StudyPlanProgress: Codable {
+    var totalMinutes: Int = 0
+    var dailyStreak: Int = 0
+    var weeklyMinutes: [Int] = Array(repeating: 0, count: 7)
+    var completedLessons: Int = 0
+    var targetLessons: Int = 0
+}
+
+// MARK: - 社交学习模型
+struct StudyGroup: Identifiable, Codable {
+    let id: UUID
+    let name: String
+    let description: String
+    let members: [UUID] // 成员用户ID
+    let admins: [UUID] // 管理员用户ID
+    let courses: [UUID] // 关联的课程ID
+    let createdAt: Date
+    let isPublic: Bool
+    let maxMembers: Int
+    
+    init(name: String, description: String, members: [UUID] = [], admins: [UUID] = [], courses: [UUID] = [], isPublic: Bool = true, maxMembers: Int = 50) {
+        self.id = UUID()
         self.name = name
         self.description = description
         self.members = members
         self.admins = admins
         self.courses = courses
-        self.createdAt = createdAt
+        self.createdAt = Date()
         self.isPublic = isPublic
         self.maxMembers = maxMembers
     }
 }
 
-// MARK: - 社区动态模型
 struct StudyPost: Identifiable, Codable {
-    let id = UUID()
-    var authorId: UUID
-    var content: String
-    var type: PostType
-    var courseId: UUID?
-    var lessonId: UUID?
-    var likes: [UUID]
-    var comments: [StudyComment]
-    var createdAt: Date
+    let id: UUID
+    let authorId: UUID
+    let content: String
+    let type: PostType
+    let courseId: UUID?
+    let lessonId: UUID?
+    let likes: [UUID] // 点赞用户ID
+    let comments: [StudyComment]
+    let createdAt: Date
     
-    enum PostType: String, CaseIterable, Codable {
-        case insight = "学习心得"
-        case question = "问题讨论"
+    init(authorId: UUID, content: String, type: PostType, courseId: UUID? = nil, lessonId: UUID? = nil, likes: [UUID] = [], comments: [StudyComment] = []) {
+        self.id = UUID()
+        self.authorId = authorId
+        self.content = content
+        self.type = type
+        self.courseId = courseId
+        self.lessonId = lessonId
+        self.likes = likes
+        self.comments = comments
+        self.createdAt = Date()
+    }
+    
+    enum PostType: String, Codable {
+        case question = "问题"
+        case insight = "心得"
         case resource = "资源分享"
         case achievement = "成就分享"
     }
 }
 
-// MARK: - 评论模型
 struct StudyComment: Identifiable, Codable {
-    let id = UUID()
-    var authorId: UUID
-    var content: String
-    var createdAt: Date
-    var likes: [UUID]
-}
-
-// MARK: - AI聊天会话模型
-struct ChatSession: Identifiable, Codable {
-    let id = UUID()
-    var title: String
-    var messages: [ChatMessage]
-    var createdAt: Date
-    var lastMessageTime: Date
-    var isArchived: Bool
+    let id: UUID
+    let authorId: UUID
+    let content: String
+    let createdAt: Date
+    let likes: [UUID]
     
-    init(title: String) {
-        self.title = title
-        self.messages = []
+    init(authorId: UUID, content: String, likes: [UUID] = []) {
+        self.id = UUID()
+        self.authorId = authorId
+        self.content = content
         self.createdAt = Date()
-        self.lastMessageTime = Date()
-        self.isArchived = false
+        self.likes = likes
     }
 }
 
-// MARK: - AI聊天消息模型
-struct ChatMessage: Identifiable, Codable {
-    let id = UUID()
-    var content: String
-    var isFromUser: Bool
-    var timestamp: Date
-    var messageType: MessageType
-    
-    enum MessageType: String, Codable {
-        case text
-        case image
-        case code
-        case suggestion
-    }
-}
-
-// MARK: - 同步数据模型
+// MARK: - 云端同步模型
 struct SyncData: Codable {
     let userId: String
     let lastSyncTime: Date
@@ -338,14 +403,4 @@ struct SyncData: Codable {
     let chatSessions: [ChatSession]
     let studyGroups: [StudyGroup]
     let studyPosts: [StudyPost]
-    
-    init(userId: String, lastSyncTime: Date, userProgress: UserProgress, studyPlans: [StudyPlan], chatSessions: [ChatSession], studyGroups: [StudyGroup], studyPosts: [StudyPost]) {
-        self.userId = userId
-        self.lastSyncTime = lastSyncTime
-        self.userProgress = userProgress
-        self.studyPlans = studyPlans
-        self.chatSessions = chatSessions
-        self.studyGroups = studyGroups
-        self.studyPosts = studyPosts
-    }
 }
