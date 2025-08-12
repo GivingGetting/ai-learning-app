@@ -1,0 +1,37 @@
+{
+    "name": "AI Learning iOS App Development",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+    "features": {
+        "ghcr.io/devcontainers/features/swift:1": {
+            "version": "5.9"
+        },
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "sswg.swift-lang",
+                "ms-vscode.vscode-json",
+                "ms-vscode.vscode-markdown",
+                "ms-vscode.vscode-yaml",
+                "ms-vscode.vscode-git",
+                "ms-vscode.vscode-github",
+                "ms-vscode.vscode-swift",
+                "ms-vscode.vscode-ios-debug"
+            ],
+            "settings": {
+                "swift.path": "/usr/bin/swift",
+                "swift.buildPath": "./.build",
+                "swift.targetBuildPath": "./.build/debug"
+            }
+        }
+    },
+    "postCreateCommand": "swift --version && echo 'Swift environment ready!'",
+    "remoteUser": "vscode",
+    "mounts": [
+        "source=${localWorkspaceFolder}/.git,target=/workspaces/.git,type=bind,consistency=cached"
+    ],
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/ai-learning-app,type=bind,consistency=cached",
+    "workspaceFolder": "/workspaces/ai-learning-app"
+}

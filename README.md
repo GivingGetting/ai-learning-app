@@ -110,7 +110,83 @@ ai/
 - iOS 14.0+ SDK
 - Swift 5.0+
 
+### 🚀 云端开发环境设置
+
+#### GitHub Codespaces（推荐）
+
+GitHub Codespaces提供了完整的云端开发环境，无需本地安装Xcode，即可进行iOS应用开发。
+
+##### 1. 创建Codespace
+1. 访问 [GitHub Codespaces](https://github.com/codespaces)
+2. 点击 "Create codespace on main"
+3. 选择包含Xcode的模板（推荐选择 "Xcode" 或 "iOS Development"）
+
+##### 2. 配置开发环境
+```bash
+# 在Codespace终端中执行以下命令
+# 安装必要的开发工具
+sudo apt update
+sudo apt install -y git curl wget
+
+# 安装Xcode命令行工具（如果模板中没有）
+xcode-select --install
+
+# 验证Swift环境
+swift --version
+```
+
+##### 3. 克隆项目
+```bash
+# 克隆您的项目到Codespace
+git clone https://github.com/yourusername/ai-learning-app.git
+cd ai-learning-app
+
+# 或者如果项目已经在GitHub上，直接打开即可
+```
+
+##### 4. 使用Xcode Cloud（可选）
+- 在GitHub仓库中启用Xcode Cloud
+- 配置自动构建和测试
+- 支持云端编译和部署
+
+##### 5. 云端开发优势
+- ✅ 无需本地安装Xcode
+- ✅ 跨平台支持（Windows、Mac、Linux）
+- ✅ 预配置的开发环境
+- ✅ 云端资源，性能强劲
+- ✅ 团队协作友好
+- ✅ 自动保存和版本控制
+
+#### 替代方案
+
+##### 1. GitPod
+- 访问 [GitPod](https://gitpod.io/)
+- 支持Swift和iOS开发
+- 免费额度充足
+
+##### 2. AWS Cloud9
+- 亚马逊云开发环境
+- 支持多种编程语言
+- 集成AWS服务
+
+##### 3. 本地开发环境
+如果选择本地开发，请确保：
+- 安装最新版本的Xcode
+- 配置iOS模拟器
+- 安装必要的开发工具
+
 ### 运行项目
+
+#### 云端环境
+1. 在Codespace中打开项目
+2. 使用内置的终端或VS Code界面
+3. 运行Swift项目：
+```bash
+swift build
+swift run
+```
+
+#### 本地环境
 1. 克隆项目到本地
 2. 使用Xcode打开`ai.xcodeproj`
 3. 选择iOS模拟器或真机

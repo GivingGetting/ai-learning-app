@@ -1,0 +1,48 @@
+{
+    "swift.path": "/usr/bin/swift",
+    "swift.buildPath": "./.build",
+    "swift.targetBuildPath": "./.build/debug",
+    "files.associations": {
+        "*.swift": "swift",
+        "*.xcodeproj": "json",
+        "*.plist": "xml"
+    },
+    "editor.formatOnSave": true,
+    "editor.rulers": [
+        120
+    ],
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.build": true,
+        "**/.swiftpm": true,
+        "**/DerivedData": true,
+        "**/*.xcuserstate": true,
+        "**/*.xcworkspace/xcuserdata": true,
+        "**/*.xcodeproj/xcuserdata": true
+    },
+    "search.exclude": {
+        "**/.build": true,
+        "**/.swiftpm": true,
+        "**/DerivedData": true
+    },
+    "swift.buildPath": "./.build",
+    "swift.targetBuildPath": "./.build/debug",
+    "swift.swiftPath": "/usr/bin/swift",
+    "swift.swiftDriverPath": "/usr/bin/swift",
+    "swift.swiftLintPath": "/usr/local/bin/swiftlint",
+    "swift.swiftFormatPath": "/usr/local/bin/swiftformat",
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.profiles.linux": {
+        "bash": {
+            "path": "/bin/bash",
+            "args": [
+                "-l"
+            ]
+        }
+    }
+}
